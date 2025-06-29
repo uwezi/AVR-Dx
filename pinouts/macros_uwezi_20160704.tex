@@ -1,0 +1,950 @@
+﻿\graphicspath{{D:/Uppsala/projects/courses/Bilder/}
+{D:/Uppsala/projects/bilder/}
+{D:/Uppsala/bilder/}
+{D:/Uppsala/projects/courses/Bilder/3d/}
+{D:/Uppsala/projects/courses/Bilder/electronics/}
+{D:/Uppsala/projects/courses/Bilder/electronics/analog/}
+{D:/Uppsala/projects/courses/Bilder/electronics/digital/}
+{D:/Uppsala/projects/courses/Bilder/electronics/digital/pinouts/}
+{D:/Uppsala/projects/courses/Bilder/electronics/LEDs/}
+{D:/Uppsala/projects/courses/Bilder/electronics/elektrisk_matteknik/}
+{D:/Uppsala/projects/courses/Bilder/cigs/}     
+{D:/Uppsala/projects/courses/Bilder/kiel/}
+{D:/Uppsala/projects/courses/Bilder/sic/}
+{D:/Uppsala/projects/courses/Bilder/solibro/}
+{D:/Uppsala/projects/courses/Bilder/iea/}
+{D:/Uppsala/projects/courses/Bilder/pr/}
+{D:/Uppsala/projects/courses/Bilder/irradiance/}
+{D:/Uppsala/projects/courses/Bilder/measurements/}
+{D:/Uppsala/projects/courses/Bilder/schroder/}
+{D:/Uppsala/projects/courses/Bilder/pvcells/}
+{D:/Uppsala/projects/courses/Bilder/pvmodules/}
+{D:/Uppsala/projects/courses/Bilder/pvsystems/}
+{D:/Uppsala/projects/courses/Bilder/eval/}
+{D:/Uppsala/projects/courses/Bilder/tak/}}
+
+\newcommand\strover[2]{\tikz[baseline=(text.base)]{
+            \node[inner sep=2pt] (text) {#2};\draw[#1](text.west)--(text.east);}}
+
+
+\DeclareSIUnit{\permille}{\textperthousand}
+\DeclareSIUnit{\bit}{bit}
+\DeclareSIUnit{\byte}{byte}
+\DeclareSIUnit[number-unit-product = {\,}]\cal{cal}
+\DeclareBinaryPrefix\kibi{Ki}{10}
+\DeclareBinaryPrefix\mebi{Mi}{20}
+\DeclareBinaryPrefix\gibi{Gi}{30}
+\DeclareBinaryPrefix\tebi{Ti}{40}
+\newcommand{\answerfield}[4][LightBlue1]% x y/line lines
+{
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \draw[rounded corners=2mm,line width=.2mm,black] ($(-0.2,-0.2)$) rectangle ($(#2,0)+(0.2,0)+#4*(0,#3)$);
+    \foreach \y in {1,...,#4}
+    {
+      \draw[line width=.2mm,#1] ($(0,0)+\y*(0,#3)-(0,#3)$) -- ++(#2,0);
+    }
+  \end{tikzpicture}
+}
+
+\newcommand{\minterm}[1]{%
+  \foreach[count=\c] \p/\s in {#1}%
+  {%
+    \ifthenelse{\equal{\p}{1}}{\ifthenelse{\c > 1}{\,}{}\s}%
+    {%
+      \ifthenelse{\equal{\p}{0}}{\ifthenelse{\c > 1}{\,}{}\overline{\s}}%
+      {%
+        \ifthenelse{\equal{\p}{x}}{}{}
+      }
+    }
+  }
+}
+
+\newcommand{\answerfieldsq}[4][Orange1]% x spacingy/line lines
+{
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \pgfmathparse{int(#2/#3)}
+    \let\numx\pgfmathresult  
+    \draw[rounded corners=2mm,line width=.2mm,black] ($(-0.2,-0.2)$) rectangle ($\numx*(#3,0)+(0.2,0.2)+#4*(0,#3)$);
+    \foreach \y in {0,...,#4}
+    {
+      \draw[line width=.2mm,#1] ($(0,#3)+\y*(0,#3)-(0,#3)$) -- ++($\numx*(#3,0)$);
+    }
+    \foreach \x in {0,...,\numx}
+    {
+      \draw[line width=.2mm,#1] ($\x*(#3,0)$) -- ($\x*(#3,0)+#4*(0,#3)$);
+    }
+  \end{tikzpicture}
+}
+
+\newlength\oldtopsep
+\newlength\oldparskip
+\newenvironment{tightcenter}{%
+  \setlength\oldtopsep\topsep
+  \setlength\oldparskip\parskip
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}\vspace*{-\oldparskip}
+}
+
+\pgfkeys{
+  /shadowbox/.is family, /shadowbox,
+  inner sep/.estore in      = \sbInner,     % vertical slant in degrees
+  shadow width/.estore in      = \sbShadowwidth,      % length of a segment
+  shadow angle/.estore in      = \sbShadowangle,      % length of a segment
+  shadow color/.estore in  = \sbShadowcolor,
+  box fill/.estore in = \sbBoxfill,
+  corner radius/.estore in = \sbCornerradius,
+  frame width/.estore in   = \sbFramewidth,
+  frame color/.estore in   = \sbFramecolor,
+}
+\pgfkeys{
+  /shadowbox,
+  default/.style = {inner sep = 5mm, box fill=white, corner radius=2pt,
+                    shadow width=3mm, shadow angle=-45, shadow color=Gray0,
+					frame color=black,frame width=0.3mm}
+}
+  
+\newcommand{\ShadowBox}[2][]%
+{%
+  \pgfkeys{/shadowbox, default, #1}%
+  \tikz{%
+  \path (0,0) node[fill=\sbBoxfill,rectangle,draw=\sbFramecolor,line width=\sbFramewidth,inner sep=\sbInner,rounded corners=\sbCornerradius](txt){#2};
+  \begin{scope}[on background layer]
+    \path [fill=\sbShadowcolor,rounded corners=\sbCornerradius] ($(txt.south west)+(\sbShadowangle:\sbShadowwidth)$) rectangle ($(txt.north east)+(\sbShadowangle:\sbShadowwidth)$);
+  \end{scope}
+  }				   
+}
+					   
+\pgfkeys{
+  /answerbox/.is family, /answerbox,
+  xstep/.estore in      = \abXstep,     % vertical slant in degrees
+  ystep/.estore in      = \abYstep,      % length of a segment
+  width/.estore in     = \abWidth,    % avoids overlapping of segments 
+  height/.estore in = \abHeight, % thickness of the segments
+  grid color/.estore in   = \abGridcolor,   % end cap style rect, round, butt
+  grid width/.estore in = \abGridwidth,
+  border color/.estore in    = \abBordercolor,   % color of an ON segment
+  border width/.estore in = \abBorderwidth,
+  background color/.estore in   = \abBackcolor,  % color of an OFF segment
+  corner radius/.estore in = \abCornerradius,
+  frame distance/.estore in = \abFramedist,
+}
+
+\pgfkeys{
+  /answerbox,
+  default/.style = {xstep = 5mm, ystep = 5mm, width = \textwidth, height = 20mm, 
+                    grid color = white, grid width = 0.5mm,
+					background color = white!95!black, 
+                    border color = blue, border width = 1mm,
+					corner radius = 2mm, frame distance=2mm}
+}
+
+\newcommand{\answerbox}[1][]%
+{
+  \pgfkeys{/answerbox, default, #1}%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \pgfmathparse{int(\abWidth/\abXstep)}
+    \let\numx\pgfmathresult  
+    \pgfmathparse{int(\abHeight/\abYstep)}
+    \let\numy\pgfmathresult  
+    \path[rounded corners=\abCornerradius,line width=\abBorderwidth,draw=\abBordercolor,fill=\abBackcolor] 
+	   ($-1*(\abFramedist,\abFramedist)$) rectangle ($\numx*(\abXstep,0)+(\abFramedist,\abFramedist)+\numy*(0,\abYstep)$);
+    \foreach \y in {0,...,\numy}
+    {
+      \draw[line width=\abGridwidth,\abGridcolor] ($\y*(0,\abYstep)$) -- ($\y*(0,\abYstep)+\numx*(\abXstep,0)$);
+    }
+    \foreach \x in {0,...,\numx}
+    {
+      \draw[line width=\abGridwidth,\abGridcolor] ($\x*(\abXstep,0)$) -- ($\x*(\abXstep,0)+\numy*(0,\abYstep)$);
+    }
+  \end{tikzpicture}
+}
+
+\newcommand{\logline}[4]{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \foreach \lx [count=\i] in {#4}
+    {
+      \draw[blue,very thick] ($#1*(\i,0)+0.5*(0,#2)$) -- ($#1*(\i,0)-0.5*(0,#2)$) node[anchor=north]{\lx};
+      \ifthenelse{\equal{\i}{1}}%
+      {
+      }%
+      {
+        \draw[blue,very thick] ($#1*(\i,0)-#1*(1,0)$) -- ($#1*(\i,0)$);
+        \foreach \ll in {0.30103, 0.47712, 0.60206, 0.69897, 0.77815, 0.84510, 0.90309, 0.95424}
+        {
+          \draw[blue,thin] ($#1*(\i,0)-#1*(1,0)+#1*(\ll,0)+0.5*(0,#3)$) -- ($#1*(\i,0)-#1*(1,0)+#1*(\ll,0)-0.5*(0,#3)$);
+        }
+      }
+    }
+  \end{tikzpicture}
+}
+\newcommand{\linline}[5]{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \foreach \lx [count=\i] in {#5}
+    {
+      \draw[blue,very thick] ($#1*(\i,0)+0.5*(0,#2)$) -- ($#1*(\i,0)-0.5*(0,#2)$) node[anchor=north]{\lx};
+      \ifthenelse{\equal{\i}{1}}%
+      {
+      }%
+      {
+        \draw[blue,very thick] ($#1*(\i,0)-#1*(1,0)$) -- ($#1*(\i,0)$);
+        \foreach \ll in {1,...,#4}
+        {
+          \draw[blue,thin] ($#1*(\i,0)-#1*(1,0)+#1/#4*(\ll,0)+0.5*(0,#3)$) -- ($#1*(\i,0)-#1*(1,0)+#1/#4*(\ll,0)-0.5*(0,#3)$);
+        }
+      }
+    }
+  \end{tikzpicture}
+}
+
+\newcommand{\grid}[2]{
+  \draw[step=.5,red,thin,loosely dotted] (#1) grid (#2);
+  \draw[step=1.0,red,thick] (#1) grid (#2);
+  \draw[red,thin] (0,0) circle (.1);
+}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\newcommand*\rrectangled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=rectangle,rounded corners=2pt,draw,inner sep=2pt] (char) {#1};}}
+
+\newcommand*\underlined[2]{\tikz[baseline=(char.base)]{
+            \node[inner sep=2pt] (char) {#2};
+            \draw[thick,#1](char.south west) -- (char.south east);}}
+
+\newcommand*\overlined[2]{\tikz[baseline=(char.base)]{
+            \node[inner sep=2pt] (char) {#2};
+            \draw[#1](char.north west) -- (char.north east);}}
+			
+\newcommand*\clk{\tikz[baseline=(base)]{
+            \draw[black,thick] (0,0) -- (0.5em,0) coordinate (base) -- (0.5em,1ex) -- (1em,1ex)}}
+			
+\providecommand{\BoxCheck}{\tikz[baseline=(char.base)]{\node[draw,rectangle,inner sep=0pt,minimum width=1.5em,minimum height=2.3ex](char){$\checkmark$}}}
+\providecommand{\BoxEmpty}{\tikz[baseline=(char.base)]{\node[draw,rectangle,inner sep=0pt,minimum width=1.5em,minimum height=2.3ex](char){~}}}
+\providecommand{\BoxX}{\tikz[baseline=(char.base)]{\node[draw,rectangle,inner sep=0pt,minimum width=1.5em,minimum height=2.3ex](char){X}}}
+\providecommand{\RaisingEdge}{\tikz{\draw[black,thick](0,0)--(.5em,0)--(.5em,2ex)--(1.0em,2ex)}}
+\providecommand{\PulseHigh}{\tikz{\draw[black,thick](0,0)--(.25em,0)--(.25em,2ex)--(.75em,2ex)--(.75em,0)--(1.0em,0)}}
+\providecommand{\PulseLow}{\tikz{\draw[black,thick](0,2ex)--(.25em,2ex)--(.25em,0)--(.75em,0)--(.75em,2ex)--(1.0em,2ex)}}
+% define "struts", as suggested by Claudio Beccari in
+%    a piece in TeX and TUG News, Vol. 2, 1993.
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\Bstrut{\rule[-0.9ex]{0pt}{0pt}}   % = `bottom' strut
+
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\newif\ifkarnaughaddress
+\newif\ifkarnaughindicator
+\pgfkeys{
+  /karnaugh/.is family, /karnaugh,
+  x bits/.estore in              = \karnaughXvars,          % bits along the horizontal axis
+  y bits/.estore in              = \karnaughYvars,          % bits along the vertical axis
+  variable names/.estore in      = \karnaughVars,           % comma-separated variable names
+  label/.estore in               = \karnaughLabel,          % label for the diagram
+  label scale/.estore in         = \karnaughLabelscale,     % scale factor for values
+  value scale/.estore in         = \karnaughValscale,       % scale factor for values
+  variable scale/.estore in      = \karnaughVarscale,       % scale factor for variables
+  variable sep/.estore in        = \karnaughVarsep,         % inner sep for variables
+  address scale/.estore in       = \karnaughAddrscale,      % scale factor for adresses
+  address sep/.estore in         = \karnaughAddrsep,        % inner sep for adresses
+  group distance/.estore in      = \karnaughGroupdistance,  % distance for grouping lines
+  group color/.estore in         = \karnaughGroupcolor,     % grouping color
+  group linewidth/.estore in     = \karnaughGroupwidth,     % grouping line width
+  group rounded/.estore in       = \karnaughGrouprounded,   % grouping rounded corner radius
+  group opacity/.estore in       = \karnaughGroupopacity,   % grouping field opacity
+  indicator distance/.estore in  = \karnaughIndicatordist,  % variable indicator distance
+  indicator linewidth/.estore in = \karnaughIndicatorwidth, % line width for indicators
+  indicator scale/.estore in     = \karnaughIndicatorscale, % scale factor for indicators
+  indicator sep/.estore in       = \karnaughIndicatorsep,   % inner sep for indicators
+  plot addresses/.is if=karnaughaddress,                    % plot address fields
+  plot indicators/.is if=karnaughindicator,                 % plot variable indicators
+}
+
+\pgfkeys{
+  /karnaugh,
+  default/.style = {plot addresses=true, 
+                    plot indicators=true,
+                    x bits = 2, 
+                    y bits = 2,
+                    address scale=0.5,
+                    address sep=1pt,
+                    variable names={$A$,$B$,$C$,$D$,$E$,$F$,$G$}, 
+                    label=$X$,
+                    label scale=1.4, 
+                    variable scale=0.7,
+                    variable sep=2pt,
+                    value scale=1.5,
+                    group color=red,
+                    group rounded=2pt,
+                    group linewidth=.3mm,
+                    group opacity=0.10,
+                    group distance=0.4,
+                    indicator distance=0.45,
+                    indicator linewidth=.4mm,
+                    indicator scale=1.0,
+                    indicator sep=2pt,
+                    }
+}
+
+%==============================================================================
+% karnaugh[options]{table}
+%
+% takes the address,value pairs from the comma-separated list {table} and
+% draws up the corresponding Karnaugh diagram.
+% the table does not need to be sorted, nor to be complete
+%
+\newcommand{\karnaugh}[2][]
+{%
+  \pgfkeys{/karnaugh, default, #1}%
+  \def\newstr{#2}
+  \tikzmath
+  {
+    function fromgray(\gcode,\bits) %
+    {
+      int \x, \pos, \leftbit, \twop;
+      \leftbit = 0;
+      \pos = 0;
+      for \x in {0,...,\bits-1}%
+      {
+        \twop = 2^(\bits - \x -1);
+        if \gcode >= \twop then %
+        { % gray code is 1
+          if \leftbit == 0 then %
+          {
+            \pos = \pos + \twop;
+            \leftbit = 1;
+          } else
+          {
+            \leftbit = 0;
+          };
+          \gcode = \gcode - \twop;
+        } else
+        { % gray code is 0
+          if \leftbit == 0 then %
+          {
+            \pos = \pos;
+          } else
+          {
+            \pos = \pos + \twop;
+            \leftbit = 1;
+          };
+        };
+      };
+      return \pos;
+    };
+    %
+    int \xbits, \ybits, \fields, \vars;
+    \xbits = \karnaughXvars;
+    \ybits = \karnaughYvars;
+    \vars  = \xbits+\ybits;
+    \fields = 2^(\vars);
+  }
+  \StrCut[\xbits]{\karnaughVars}{,}{\xlabels}{\ylabels}
+  \StrBefore[\ybits]{\ylabels}{,}[\ylabels]
+  \StrSubstitute[0]{\xlabels}{,}{}[\xlabels]
+  \StrSubstitute[0]{\ylabels}{,}{}[\ylabels]
+  \path ($(0,0.5)+\karnaughVarscale*(0,2ex)$) node[anchor=south,inner sep = \karnaughVarsep,scale=\karnaughVarscale] {\ttfamily\xlabels};
+  \path (-0.5,0.5) node[anchor=north east,inner sep=\karnaughVarsep,scale=\karnaughVarscale] {\ttfamily\ylabels};
+  \foreach [remember=\newstr as \workstr (initially \newstr)] \i in {1,...,\fields}%
+  {%
+    \StrCut[2]{\workstr}{,}{\nowstr}{\newstr}
+    \StrLen{\newstr}[\len]
+    \ifthenelse{\equal{\len}{0}}{\def\newstr{,,}}{}%
+    \StrLen{\nowstr}[\len]
+    \ifthenelse{\equal{\len}{1}}{}%
+    {%
+      \StrCut[1]{\nowstr}{,}{\addrstr}{\valuestr}
+      \tikzmath{
+        int \xpos, \ypos, \xaddr, \yaddr, \addr;
+        \addr = 0b\addrstr;
+        \xaddr = int(\addr / 2^\ybits);
+        \yaddr = \addr - \xaddr * 2^\ybits;
+        \xpos = fromgray(\xaddr,\xbits);
+        \ypos = fromgray(\yaddr,\ybits);
+      } % end tikzmath
+      % place field value
+      \path ($(\xpos,-\ypos)$) node[anchor=center,inner sep=0pt,scale=\karnaughValscale](F\addrstr){\valuestr};
+    }%
+  }
+  \tikzmath
+  {
+    int \x, \y, \xmax, \ymax, \value;
+    \xmax = 2^\xbits - 1;
+    \ymax = 2^\ybits - 1;
+    { \draw ($(-0.5,0.5)$) -- ($(-0.5,-\ymax-0.5)$); };
+    for \x in {0,...,\xmax}%
+    {
+      \xpos = fromgray(\x,\xbits);
+      {
+        \path ($(\xpos,0.5)$) node[anchor=south,black,inner sep=2pt,scale=\karnaughVarscale]{\ttfamily\padzeroes[\xbits]\binarynum{\x}};
+        \draw ($(\xpos+0.5,0.5)$) -- ($(\xpos+0.5,-\ymax-0.5)$);
+      };
+    };
+    { \draw ($(-0.5,+0.5)$) -- ($(\xmax+0.5,+0.5)$); };
+    for \y in {0,...,\ymax}%
+    {
+      \ypos = fromgray(\y,\ybits);
+      {
+        \path ($(-0.5,-\ypos)$) node[anchor=east,black,inner sep=2pt,scale=\karnaughVarscale]{\ttfamily\padzeroes[\ybits]\binarynum{\y}};
+        \draw ($(-0.5,-\ypos-0.5)$) -- ($(\xmax+0.5,-\ypos-0.5)$);
+      };
+    };
+  }
+  \ifkarnaughaddress
+  \tikzmath
+  {
+    int \x, \y, \xmax, \ymax, \value;
+    \xmax = 2^\xbits - 1;
+    \ymax = 2^\ybits - 1;
+    for \x in {0,...,\xmax}%
+    {
+      \xpos = fromgray(\x,\xbits);
+      for \y in {0,...,\ymax}%
+      {
+        \ypos = fromgray(\y,\ybits);
+        { %
+            \path ($(\xpos,-\ypos)+(0.5,-0.5)$) node[anchor=south east,inner sep=\karnaughAddrsep,blue,scale=\karnaughAddrscale]{\ttfamily\padzeroes[\xbits]\binarynum{\x}\padzeroes[\ybits]\binarynum{\y}};
+        };
+      };
+    };
+  }
+  \fi
+  \ifkarnaughindicator
+  \tikzmath%
+  {%
+    int \i, \il, \j, \n;
+    real \x,\xmax,\y,\ymax;
+    for \i in {1,...,\xbits}%
+    {
+      \n = 2^(\i-2);
+      \il = \i+1;  
+      if \n < 1 then {\n=1;};
+      \y = 0.5 + \karnaughIndicatordist*(\i);
+      for \j in {1,...,\n}%
+      {
+        \x = -0.5 + 2^(\xbits-\i) + (\j-1)*2^(\xbits-\i+2);
+        \xmax = \x + 2^(\xbits-\i+1);
+        if \xmax > (2^(\xbits)-0.5) then {\xmax=2^(\xbits)-0.5;};
+        {
+          \StrBetween[\i,\numexpr\i+1]{,\karnaughVars,}{,}{,}[\tlabel] 
+          \path [draw=black,line width=\karnaughIndicatorwidth] (\x,\y) -- (\xmax,\y) node[anchor=south east,inner sep=\karnaughIndicatorsep,scale=\karnaughIndicatorscale]{\tlabel};
+          \path [draw=black,line width=\karnaughIndicatorwidth] (\x,\y)++(0,-0.1) -- ++(0,+0.2);
+          \path [draw=black,line width=\karnaughIndicatorwidth] (\xmax,\y)++(0,-0.1) -- ++(0,+0.2);
+        };
+      };
+    };
+    for \i in {1,...,\ybits}%
+    {
+      \n = 2^(\i-2);
+      if \n < 1 then {\n=1;};
+      \x = -0.5 - \karnaughIndicatordist*(\i-1);
+      for \j in {1,...,\n}%
+      {
+        \y = -0.5 + 2^(\ybits-\i) + (\j-1)*2^(\ybits-\i+2);
+        \ymax = \y + 2^(\ybits-\i+1);
+        if \ymax > (2^(\ybits)-0.5) then {\ymax=2^(\ybits)-0.5;};
+        {
+          \StrBetween[\numexpr\i+\xbits,\numexpr\i+\xbits+1]{,\karnaughVars,}{,}{,}[\tlabel]
+          \path [draw=black,line width=\karnaughIndicatorwidth] ($(\x,-\y)-\ybits*(1.4ex,0)$) -- ($(\x,-\ymax)-\ybits*(1.4ex,0)$) node[anchor=south west,rotate=90,inner sep=\karnaughIndicatorsep,scale=\karnaughIndicatorscale]{\tlabel};
+          \path [draw=black,line width=\karnaughIndicatorwidth] ($(\x,-\y)-\ybits*(1.4ex,0)$)++(-0.1,0) -- ++(+0.2,0);
+          \path [draw=black,line width=\karnaughIndicatorwidth] ($(\x,-\ymax)-\ybits*(1.4ex,0)$)++(-0.1,0) -- ++(+0.2,0);
+        };
+      };
+    };
+  }
+  \fi
+  \path[draw=black] (-0.5,0.5) -- ++(-0.5,0.5) node[anchor=south east,inner sep=2pt,scale=\karnaughLabelscale]{\karnaughLabel};
+}
+
+%==============================================================================
+% karnaughgroup[options]{from}{to}
+%
+% groups together the fields between {from} and {to} by drawing a frame around 
+% these fields.
+% if the {from} field is above or right of the {to} field, the frame is extended
+% around the edge of the diagram.
+%
+\newcommand{\karnaughgroup}[3][] % options from to
+{%
+  \pgfkeys{/karnaugh, default, #1}%
+  \tikzmath
+  {
+    int \xbits, \ybits, \fields, \vars;
+    \xbits = \karnaughXvars;
+    \ybits = \karnaughYvars;
+    \vars  = \xbits+\ybits;
+    \fields = 2^(\vars);
+  }
+  \tikzmath{
+    int \xfrompos, \yfrompos, \xfrom, \yfrom, \fromaddr;
+    int \xtopos, \ytopos, \xto, \yto, \toaddr;
+    \fromaddr = 0b#2;
+    \xfrom = int(\fromaddr / 2^\ybits);
+    \yfrom = \fromaddr - \xfrom * 2^\ybits;
+    \xfrompos = fromgray(\xfrom,\xbits);
+    \yfrompos = fromgray(\yfrom,\ybits);
+    \toaddr = 0b#3;
+    \xto = int(\toaddr / 2^\ybits);
+    \yto = \toaddr - \xto * 2^\ybits;
+    \xtopos = fromgray(\xto,\xbits);
+    \ytopos = fromgray(\yto,\ybits);
+    \xmax = 2^\xbits-1;
+    \ymax = 2^\ybits-1;
+  } % end tikzmath
+  \tikzmath%
+  {
+    if (\xfrompos <= \xtopos) && (\yfrompos >= \ytopos) then %
+    {
+      { 
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity,rounded corners=\karnaughGrouprounded] ($(\xfrompos,-\yfrompos)-(\karnaughGroupdistance,\karnaughGroupdistance)$) rectangle ($(\xtopos,-\ytopos)+(\karnaughGroupdistance,\karnaughGroupdistance)$);
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(\xfrompos,-\yfrompos)-(\karnaughGroupdistance,\karnaughGroupdistance)$) rectangle ($(\xtopos,-\ytopos)+(\karnaughGroupdistance,\karnaughGroupdistance)$);
+      };
+    };
+    if (\xfrompos <= \xtopos) && (\yfrompos < \ytopos) then %
+    {
+      {
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity,rounded corners=\karnaughGrouprounded] ($(\xfrompos,0)+(-\karnaughGroupdistance,+0.5)$) -- ($(\xfrompos,-\yfrompos)+(-\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,-\yfrompos)+(\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,0)+(\karnaughGroupdistance,+0.5)$) -- cycle;
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity,rounded corners=\karnaughGrouprounded] ($(\xfrompos,-\ymax)+(-\karnaughGroupdistance,-0.5)$) -- ($(\xfrompos,-\ytopos)+(-\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ytopos)+(\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ymax)+(\karnaughGroupdistance,-0.5)$) -- cycle;
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(\xfrompos,0)+(-\karnaughGroupdistance,+0.5)$) -- ($(\xfrompos,-\yfrompos)+(-\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,-\yfrompos)+(\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,0)+(\karnaughGroupdistance,+0.5)$);
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(\xfrompos,-\ymax)+(-\karnaughGroupdistance,-0.5)$) -- ($(\xfrompos,-\ytopos)+(-\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ytopos)+(\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ymax)+(\karnaughGroupdistance,-0.5)$);
+      };
+    };
+    if (\xfrompos > \xtopos) && (\yfrompos >= \ytopos) then %
+    {
+      {
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity,rounded corners=\karnaughGrouprounded] ($(0,-\yfrompos)+(-0.5,-\karnaughGroupdistance)$) -- ($(\xtopos,-\yfrompos)+(+\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,-\ytopos)+(\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(0,-\ytopos)+(-0.5,+\karnaughGroupdistance)$) -- cycle;
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity,rounded corners=\karnaughGrouprounded] ($(\xmax,-\yfrompos)+(+0.5,-\karnaughGroupdistance)$) -- ($(\xfrompos,-\yfrompos)+(-\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xfrompos,-\ytopos)+(-\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xmax,-\ytopos)+(+0.5,+\karnaughGroupdistance)$) -- cycle;
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(0,-\yfrompos)+(-0.5,-\karnaughGroupdistance)$) -- ($(\xtopos,-\yfrompos)+(+\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,-\ytopos)+(\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(0,-\ytopos)+(-0.5,+\karnaughGroupdistance)$);
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(\xmax,-\yfrompos)+(+0.5,-\karnaughGroupdistance)$) -- ($(\xfrompos,-\yfrompos)+(-\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xfrompos,-\ytopos)+(-\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xmax,-\ytopos)+(+0.5,+\karnaughGroupdistance)$);
+      };
+    };
+    if (\xfrompos > \xtopos) && (\yfrompos < \ytopos) then %
+    {
+      {
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity] {[rounded corners=\karnaughGrouprounded] ($(0,-\yfrompos)+(-0.5,-\karnaughGroupdistance)$) -- ($(\xtopos,-\yfrompos)+(+\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,0)+(\karnaughGroupdistance,+0.5)$)} -- ($(0,0)+(-0.5,+0.5)$) -- cycle;
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity] {[rounded corners=\karnaughGrouprounded] ($(0,-\ytopos)+(-0.5,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ytopos)+(+\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ymax)+(\karnaughGroupdistance,-0.5)$)} -- ($(0,-\ymax)+(-0.5,-0.5)$) -- cycle;
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity] {[rounded corners=\karnaughGrouprounded] ($(\xmax,-\yfrompos)+(+0.5,-\karnaughGroupdistance)$) -- ($(\xfrompos,-\yfrompos)+(-\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xfrompos,0)+(-\karnaughGroupdistance,+0.5)$)}  -- ($(\xmax,0)+(+0.5,+0.5)$) -- cycle;
+        \path[fill=\karnaughGroupcolor,opacity=\karnaughGroupopacity] {[rounded corners=\karnaughGrouprounded] ($(\xmax,-\ytopos)+(+0.5,+\karnaughGroupdistance)$) -- ($(\xfrompos,-\ytopos)+(-\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xfrompos,-\ymax)+(-\karnaughGroupdistance,-0.5)$)} -- ($(\xmax,-\ymax)+(+0.5,-0.5)$) -- cycle;
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(0,-\yfrompos)+(-0.5,-\karnaughGroupdistance)$) -- ($(\xtopos,-\yfrompos)+(+\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xtopos,0)+(\karnaughGroupdistance,+0.5)$);
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(0,-\ytopos)+(-0.5,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ytopos)+(+\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xtopos,-\ymax)+(\karnaughGroupdistance,-0.5)$);
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(\xmax,-\yfrompos)+(+0.5,-\karnaughGroupdistance)$) -- ($(\xfrompos,-\yfrompos)+(-\karnaughGroupdistance,-\karnaughGroupdistance)$) -- ($(\xfrompos,0)+(-\karnaughGroupdistance,+0.5)$);
+        \path[draw=\karnaughGroupcolor,line width=\karnaughGroupwidth,rounded corners=\karnaughGrouprounded] ($(\xmax,-\ytopos)+(+0.5,+\karnaughGroupdistance)$) -- ($(\xfrompos,-\ytopos)+(-\karnaughGroupdistance,+\karnaughGroupdistance)$) -- ($(\xfrompos,-\ymax)+(-\karnaughGroupdistance,-0.5)$);
+      };
+    };
+  }
+}
+
+\pgfkeys{
+  /sevenseg/.is family, /sevenseg,
+  slant/.estore in      = \sevensegSlant,     % vertical slant in degrees
+  size/.estore in       = \sevensegSize,      % length of a segment
+  shrink/.estore in     = \sevensegShrink,    % avoids overlapping of segments 
+  line width/.estore in = \sevensegLinewidth, % thickness of the segments
+  line cap/.estore in   = \sevensegLinecap,   % end cap style rect, round, butt
+  oncolor/.estore in    = \sevensegOncolor,   % color of an ON segment
+  offcolor/.estore in   = \sevensegOffcolor,  % color of an OFF segment
+}
+
+\pgfkeys{
+  /sevenseg,
+  default/.style = {slant = 0, size = 1em, shrink = 0.1, 
+                    line width = 0.15em, line cap = butt, 
+                    oncolor = red, offcolor = gray}
+}
+
+\newcommand{\sevenSeg}[2][]% options values
+{%
+  \pgfkeys{/sevenseg, default, #1}%
+  \begin{tikzpicture}%
+  \path (0,0) ++(0,0) coordinate (P1);
+  \path (0,0) ++(\sevensegSize,0) coordinate (P2);
+  \path (0,0) ++(90-\sevensegSlant:\sevensegSize) coordinate (P3);
+  \path (P2) ++(90-\sevensegSlant:\sevensegSize) coordinate (P4);
+  \path (P3) ++(90-\sevensegSlant:\sevensegSize) coordinate (P5);
+  \path (P4) ++(90-\sevensegSlant:\sevensegSize) coordinate (P6);
+  \foreach \i in {1,...,7}%
+  {
+    \StrChar{#2}{\i}[\seg] 
+    \ifthenelse{\equal{\seg}{1}}{\let\mycolor=\sevensegOncolor}{\let\mycolor=\sevensegOffcolor}
+    \tikzstyle{segstyle}=[draw=\mycolor, line width = \sevensegLinewidth, line cap = \sevensegLinecap]
+    %-----------------------
+    \ifthenelse{\equal{\i}{1}}{\path[segstyle] (${1-\sevensegShrink}*(P5)+\sevensegShrink*(P6)$) -- ($\sevensegShrink*(P5)+{1-\sevensegShrink}*(P6)$);}{} % a
+    \ifthenelse{\equal{\i}{2}}{\path[segstyle] (${1-\sevensegShrink}*(P6)+\sevensegShrink*(P4)$) -- ($\sevensegShrink*(P6)+{1-\sevensegShrink}*(P4)$);}{} % b
+    \ifthenelse{\equal{\i}{3}}{\path[segstyle] (${1-\sevensegShrink}*(P4)+\sevensegShrink*(P2)$) -- ($\sevensegShrink*(P4)+{1-\sevensegShrink}*(P2)$);}{} % c
+    \ifthenelse{\equal{\i}{4}}{\path[segstyle] (${1-\sevensegShrink}*(P1)+\sevensegShrink*(P2)$) -- ($\sevensegShrink*(P1)+{1-\sevensegShrink}*(P2)$);}{} % d
+    \ifthenelse{\equal{\i}{5}}{\path[segstyle] (${1-\sevensegShrink}*(P1)+\sevensegShrink*(P3)$) -- ($\sevensegShrink*(P1)+{1-\sevensegShrink}*(P3)$);}{} % e
+    \ifthenelse{\equal{\i}{6}}{\path[segstyle] (${1-\sevensegShrink}*(P3)+\sevensegShrink*(P5)$) -- ($\sevensegShrink*(P3)+{1-\sevensegShrink}*(P5)$);}{} % f
+    \ifthenelse{\equal{\i}{7}}{\path[segstyle] (${1-\sevensegShrink}*(P3)+\sevensegShrink*(P4)$) -- ($\sevensegShrink*(P3)+{1-\sevensegShrink}*(P4)$);}{} % g
+  }
+  \end{tikzpicture}%
+}
+
+\newcommand{\sevenSegnum}[2][]%
+{%
+  \ifthenelse{\equal{#2}{0}}{\sevenSeg[#1]{1111110}}{%
+  \ifthenelse{\equal{#2}{1}}{\sevenSeg[#1]{0110000}}{%
+  \ifthenelse{\equal{#2}{2}}{\sevenSeg[#1]{1101101}}{%
+  \ifthenelse{\equal{#2}{3}}{\sevenSeg[#1]{1111001}}{%
+  \ifthenelse{\equal{#2}{4}}{\sevenSeg[#1]{0110011}}{%
+  \ifthenelse{\equal{#2}{5}}{\sevenSeg[#1]{1011011}}{%
+  \ifthenelse{\equal{#2}{6}}{\sevenSeg[#1]{1011111}}{%
+  \ifthenelse{\equal{#2}{7}}{\sevenSeg[#1]{1110000}}{%
+  \ifthenelse{\equal{#2}{8}}{\sevenSeg[#1]{1111111}}{%
+  \ifthenelse{\equal{#2}{9}}{\sevenSeg[#1]{1111011}}{%
+  \ifthenelse{\equal{#2}{A}}{\sevenSeg[#1]{1110111}}{%
+  \ifthenelse{\equal{#2}{B}}{\sevenSeg[#1]{0011111}}{%
+  \ifthenelse{\equal{#2}{C}}{\sevenSeg[#1]{0001101}}{%
+  \ifthenelse{\equal{#2}{D}}{\sevenSeg[#1]{0111101}}{%
+  \ifthenelse{\equal{#2}{E}}{\sevenSeg[#1]{1001111}}{%
+  \ifthenelse{\equal{#2}{F}}{\sevenSeg[#1]{1000111}}{%
+  {\sevenSeg[#1]{0000000}}}}}}}}}}}}}}}}}}%
+}
+
+\hyphenation{FPGA mot-stånd mät-e-lek-tro-nik}
+
+\DeclareRobustCommand{\symbatt}{\texorpdfstring{{\tikz[thick,baseline=(p.base),x=1em,y=1ex]{\path (0,0) node[anchor=west,inner sep=1pt] (p) {\small $+$};\path (p.east) node[anchor=west,inner sep=1pt] (m) {\small $-$};\draw (p.south west) rectangle (m.north east);\draw [ultra thick] (p.north west)--(p.north east) (m.north west)--(m.north east);}}}{battery}}
+\DeclareRobustCommand{\symbuzzer}{\texorpdfstring{{\tikz[thick,baseline=(O.base),x=1em,y=1ex]{\path (0,0) node[anchor=west,inner sep=0pt] (O) {\phantom{O}};\fill (0,0) circle (1pt);\draw (-30:5pt) arc (-30:30:5pt);\draw (-30:10pt) arc (-30:30:10pt);\draw (-30:15pt) arc (-30:30:15pt);}}}{}}
+\DeclareRobustCommand{\symdc}{\texorpdfstring{{\tikz[thick,baseline=(O.base),x=1em,y=1ex]{\path (0,0) node[anchor=west,inner sep=0pt] (O) {\phantom{O}};\draw ($(O.west) + (0,0.4)$) -- ++(1,0);\draw[dash pattern=on 0.2em off 0.2em] ($(O.west) + (0,-0.4)$) -- ++(1,0);}}}{DC}}
+\DeclareRobustCommand{\symsquarewave}{\texorpdfstring{{\tikz[thick,baseline=(O.base),x=1em,y=1ex]{\path (0,0) node[anchor=west,inner sep=0pt] (O) {\phantom{O}};\draw ($(O.west) + (0,-0.5)$) -- ++(.25,0) -- ++(0,1) -- ++(.25,0) -- ++(0,-1) -- ++(.25,0) -- ++(0,1) -- ++(.25,0);}}}{square wave}}
+\DeclareRobustCommand{\symac}{\texorpdfstring{{\tikz[thick,baseline=(O.base),x=1em,y=1ex]{\path (0,0) node[anchor=west,inner sep=0pt] (O) {\phantom{O}};\draw[] (0,0) sin (.25,.5) cos (.5,0) sin (.75,-.5) cos (1,0);}}}{AC}}
+\DeclareRobustCommand{\symdiode}{\texorpdfstring{{\tikz[circuit ee IEC,small circuit symbols,set diode graphic=var diode IEC graphic,
+set make contact graphic= var make contact IEC graphic,thick,baseline=(O.base),x=1em,y=1ex]{\path (0,0) node[anchor=west,inner sep=0pt] (O) {\phantom{O}};\draw[] (0,0) to [diode] ++(1,0);}}}{diode}}
+
+\DeclareTextFontCommand{\tred}{\color{red}}
+
+\newcommand\includegraphicscopyright[3][]{%
+  \leavevmode\vbox{\vskip3pt\raggedright\setbox\mytempbox=\hbox{\includegraphics[#1]{#2}}%
+    \mytempdimen=\wd\mytempbox\box\mytempbox\par\vskip1pt%
+    \fontsize{3}{3.5}\selectfont{\color{black!25}{\vbox{\hsize=\mytempdimen#3}}}\vskip3pt%
+}}
+
+\newenvironment{colortabular}[1]{\medskip\rowcolors[]{1}{blue!20}{blue!10}\tabular{#1}\rowcolor{blue!40}}{\endtabular\medskip}
+
+\def\equad{\leavevmode\hbox{}\quad}
+
+\newenvironment{greencolortabular}[1]
+{\medskip\rowcolors[]{1}{green!50!black!20}{green!50!black!10}%
+  \tabular{#1}\rowcolor{green!50!black!40}}%
+{\endtabular\medskip}
+
+
+%-------------------------------------
+\newcommand{\logicplot}[4]{% coordinate-pattern-x-style
+  \begin{scope}[x=1em,y=2ex,inner sep=0pt]
+    \draw [/axisstyle] ($#1$) -- +(#3,0);
+    \draw [/axisstyle] ($#1$) -- +(0,1.5);
+    \node [anchor=south west] at ($#1$) {#4\textifsym{#2}};
+  \end{scope}
+}
+
+\pgfkeys{/connectstyle/.is choice}
+\pgfkeys{/connectstyle/ /.style={draw,black,semithick}}
+\pgfkeys{/connectstyle/0/.style={draw,blue,semithick}}
+\pgfkeys{/connectstyle/1/.style={draw,blue,very thick}}
+\pgfkeys{/connectstyle/?/.style={draw,black,semithick}}
+\pgfkeys{/connectstyle/x/.style={draw,black,semithick}}
+
+\pgfkeys{/xcconnectstyle/.is choice}
+\pgfkeys{/xcconnectstyle/ /.style={}}
+\pgfkeys{/xcconnectstyle/0/.style={draw,blue,thin}}
+\pgfkeys{/xcconnectstyle/1/.style={draw,blue!80!white,ultra thick}}
+\pgfkeys{/xcconnectstyle/?/.style={}}
+\pgfkeys{/xcconnectstyle/x/.style={}}
+
+%=====================================================================================
+\pgfkeys{
+  /pighixxxpin/.is family, /pighixxxpin,
+  connect color/.estore in     = \pighixxxConnectColor,      % connectors
+  connect length/.estore in    = \pighixxxConnectLength,     % connectors
+  connect linewidth/.estore in = \pighixxxConnectLinewidth,  % connectors
+  angle/.estore in = \pighixxxAngle,
+}
+
+\pgfkeys{
+  /pighixxxpin,
+  default/.style = 
+  {%
+    connect color = black,
+    connect length = 2mm,
+    connect linewidth = .3mm,
+    angle = 0,
+  }
+}
+\newcommand{\pighixxxpin}[3][]%
+{%
+  \pgfkeys{/pighixxxpin, default, #1}%
+  \path(#2)coordinate(Ldummy);
+  \pgfmathparse{-180+\pighixxxAngle}\edef\pighixxxNAngle{\pgfmathresult}
+  \foreach[remember=\text as \lasttext (initially dummy)] \text/\tcol/\col/\w in {#3}%
+  {%
+    \ifthenelse{\pighixxxAngle > 90 \and \pighixxxAngle < 270}%
+    {%
+      \ifthenelse{\equal{\text}{}}{%
+	    \edef\text{pighixxx}
+	    \draw[draw=\pighixxxConnectColor,line width=\pighixxxConnectLinewidth]%
+          (L\lasttext.west) -- ++(\pighixxxAngle:\pighixxxConnectLength)
+		  -- ++(\pighixxxAngle:\w) coordinate(L\text);
+	  }{%
+        \draw[draw=\pighixxxConnectColor,line width=\pighixxxConnectLinewidth]%
+          (L\lasttext.west) -- ++(\pighixxxAngle:\pighixxxConnectLength)%
+          node[anchor=east,rotate=\pighixxxNAngle,text=\tcol,fill=\col,rounded corners=.5mm,inner sep=.5mm,draw=black,line width=.1mm,minimum width=\w]%
+          (L\text){\ttfamily\tiny\text};
+      }		  
+    }{%
+      \ifthenelse{\equal{\text}{}}{%
+	    \edef\text{pighixxx}
+	    \draw[draw=\pighixxxConnectColor,line width=\pighixxxConnectLinewidth]%
+          (L\lasttext.east) -- ++(\pighixxxAngle:\pighixxxConnectLength)
+		  -- ++(\pighixxxAngle:\w) coordinate(L\text);
+	  }{%
+        \draw[draw=\pighixxxConnectColor,line width=\pighixxxConnectLinewidth]%
+          (L\lasttext.east) -- ++(\pighixxxAngle:\pighixxxConnectLength)%
+          node[anchor=west,rotate=\pighixxxAngle,text=\tcol,fill=\col,rounded corners=.5mm,inner sep=.5mm,draw=black,line width=.1mm,minimum width=\w]%
+          (L\text){\ttfamily\tiny\text};
+      }
+	}
+  }
+}
+%=====================================================================================
+
+%\pgfkeys{/xcircuit/.style={inner sep=0pt,x=12.045pt,y=12.045pt,point/.style={circle,fill=red,minimum size=2pt,inner sep=0pt}}}
+\pgfkeys{/xcircuit/.style={inner sep=0pt,x=6.022pt,y=6.022pt,point/.style={coordinate}}}
+\pgfkeys{/xcircuitdebug/.style={inner sep=0pt,x=6.022pt,y=6.022pt,point/.style={circle,fill=red,minimum size=2pt,inner sep=0pt}}}
+
+\pgfkeys{/axisstyle/.style={arrows=-latex'}}
+
+\newcommand\xcircuitgrid{%
+         \draw [color=orange,very thin] (image.south west) grid [step=0.2] (image.north east);
+         \draw [color=red,thin] (image.south west) grid [step=1.0] (image.north east);
+         \foreach \num in {0,5,...,45}
+         {
+           \node [anchor=north] at ($(image.south west) + (\num,-0.5)$) {\tiny\num};
+         }
+         \foreach \num in {0,5,...,20}
+         {
+           \node [anchor=east] at ($(image.south west) + (-0.5,\num)$) {\tiny\num};
+         }
+}
+
+\newcommand{\PBS}[1]{\let\temp=\\#1\let\\=\temp}
+
+\newcommand{\mmeter}[3]{%
+ \begin{scope}[shift={(#1)}]
+  \draw[black, very thick] (-0.9,0) rectangle (0.9,1);
+  \draw[black, very thin] ($(0,0)+(30:0.9)$) arc (30:150:0.9);
+  \path (0,0.45) node [anchor=center] {#3};
+  \foreach \a in {0,20,40,60,80,100,120}
+  {
+    \draw[black,very thin] ($(0,0)+(150-\a:0.8)$) -- ($(0,0)+(150-\a:0.9)$);
+  }
+  \path ($(0,0)+(150:0.8)$) node [anchor=north west,inner sep=0pt]{\tiny 0};
+  \ifthenelse{\equal{#2}{-1}}{}{%
+    \draw[red,very thick,line cap=round] (0,0) -- ($(0,0)+(150-#2:0.85)$);
+  }
+  \filldraw[black, very thick] (-0.9,0) rectangle (0.9,-0.3);
+ \end{scope}
+}
+
+\newcommand{\resistor}[4]{%
+  \begin{scope}[shift={(#1)},rotate=#3]
+    \ifthenelse{\equal{#2}{3}}{%
+      \draw[black,thick] (0,0) ++(0,1) -- (0,2);
+      \draw[black,thick] (0,0) ++(0,-1) -- (0,-2);
+    }{%
+      \draw[black,thick] (0,0) ++(0,#2) -- (0,2);
+      \draw[black,thick] (0,0) ++(0,-#2) -- (0,-2);
+      \ifthenelse{\equal{#2}{0}}{}{%
+        \path (0,0) ++($-0.5*(#2,0)$) node [anchor=east] {#4};
+      }
+      \draw[black,thick] (0,0) ++($(0,#2)-0.5*(#2,0)$) rectangle ++($-2*(0,#2)+(#2,0)$);
+    }
+  \end{scope}
+}
+
+\pgfkeys{/statestyle/.is choice}
+\pgfkeys{/statestyle/ /.style={circle,minimum height=3ex,draw=black!50,very thick,fill=black!20}}
+\pgfkeys{/statestyle/0/.style={circle,minimum height=3ex,draw=black!50,very thick,fill=black!20}}
+\pgfkeys{/statestyle/1/.style={circle,minimum height=3ex,draw=blue!50,very thick,fill=blue!20}}
+\pgfkeys{/statestyle/2/.style={circle,minimum height=3ex,draw=black,very thick}}
+\pgfkeys{/statestyle/3/.style={circle,minimum height=3ex,draw=black,very thick,align=center}}
+
+\newcommand{\nodearrow}[5][]{\ifthenelse{\equal{#4}{0}}%
+  {\path[blue,-latex',thick,midway,anchor=south,#1] (#2) edge node[#1] {$#5#4$} (#3);}
+  {\path[Coral3,-latex',thick,midway,anchor=south,#1] (#2) edge node[#1] {$#5#4$} (#3);}}
+
+\newcommand{\nodeloop}[4][]{\ifthenelse{\equal{#3}{0}}%
+  {\path[blue,-latex',thick,in=30,out=-30,midway,anchor=south,#1,loop] (#2) edge[-latex'] node[#1] {$#4#3$} (#2);}
+  {\path[Coral3,-latex',thick,in=30,out=-30,midway,anchor=south,#1,loop] (#2) edge[-latex'] node[#1] {$#4#3$} (#2);}}
+
+%\pgfkeys{/xcircuit/.style={inner sep=0pt,x=12.045pt,y=12.045pt,point/.style={circle,fill=red,minimum size=2pt,inner sep=0pt}}}
+\pgfkeys{/xcircuit/.style={inner sep=0pt,x=6.022pt,y=6.022pt,point/.style={coordinate}}}
+\pgfkeys{/xcircuitdebug/.style={inner sep=0pt,x=6.022pt,y=6.022pt,point/.style={circle,fill=red,minimum size=2pt,inner sep=0pt}}}
+
+
+
+
+\newcommand{\Vs}[1]{\ensuremath{V_{\text{\slshape #1}}}}
+\newcommand{\Us}[1]{\ensuremath{U_{\text{\slshape #1}}}}
+\newcommand{\vs}[1]{\ensuremath{v_{\text{\slshape #1}}}}
+\newcommand{\us}[1]{\ensuremath{u_{\text{\slshape #1}}}}
+\newcommand{\Rs}[1]{\ensuremath{R_{\text{\slshape #1}}}}
+\newcommand{\As}[1]{\ensuremath{A_{\text{\slshape #1}}}}
+\newcommand{\hs}[1]{\ensuremath{h_{\text{\slshape #1}}}}
+\newcommand{\Is}[1]{\ensuremath{I_{\text{\slshape #1}}}}
+\newcommand{\is}[1]{\ensuremath{i_{\text{\slshape #1}}}}
+
+
+\newcommand{\semilog}[7]{
+\pgfmathparse{int(#2-1)}\let\Xmax\pgfmathresult
+\foreach \ee in{#1,...,\Xmax}{
+    \foreach \x in {1,2,3,4,5,6,7,8,9}{
+\draw[thin] ({log10(\x)+\ee},#3) -- ({log10(\x)+\ee},#4);}
+\draw[thin, red] (\ee,#3)node[below]{$10^{\ee}$} -- ({\ee},#4);
+};
+\draw[thin, red] ({#2},#3)node[name=TextX,below]{$10^{#2}$} -- ({#2},#4);
+\pgfmathparse{int(#3+#5)}
+\let\Valsuivante\pgfmathresult
+\foreach \yy in  {#3,\Valsuivante,...,#4}{
+\draw[thin, red] (#1,\yy) node[left,name=TextY]{$\yy$} -- ({#2},\yy);};
+
+\node[  above of= TextY,node distance=0.6em,above] { #7};
+\node[ right]at (#2,#3){ #6};
+}
+
+
+\newcommand{\semiloggrid}[1]{%
+          \pgfline{\pgfxy(0.7525,0)}{\pgfxy(0.7525,#1)}
+          \pgfline{\pgfxy(1.1925,0)}{\pgfxy(1.1925,#1)}
+          \pgfline{\pgfxy(1.5050,0)}{\pgfxy(1.5050,#1)}
+          \pgfline{\pgfxy(1.7475,0)}{\pgfxy(1.7475,#1)}
+          \pgfline{\pgfxy(1.9450,0)}{\pgfxy(1.9450,#1)}
+          \pgfline{\pgfxy(2.1125,0)}{\pgfxy(2.1125,#1)}
+          \pgfline{\pgfxy(2.2575,0)}{\pgfxy(2.2575,#1)}
+          \pgfline{\pgfxy(2.3850,0)}{\pgfxy(2.3850,#1)}
+}
+
+\newcommand{\bodenof}[1]{%
+      \begin{pgfpicture}{0cm}{-0.5cm}{15cm}{#1cm}
+        \pgfsetlinewidth{.1mm}
+        \color{black}
+        \pgfgrid[stepx=25mm,stepy=10mm]{\pgfxy(0,0)}{\pgfxy(15,#1)}
+        \pgfsetlinewidth{.1mm}
+        \color{gray}
+        \begin{pgftranslate}{\pgfxy(0,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(2.5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(7.5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(10,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(12.5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \pgfsetlinewidth{.2mm}
+        \color{black}
+        \pgfrect[stroke]{\pgfxy(0,0)}{\pgfxy(15,#1)}
+      \end{pgfpicture}
+}
+
+\newcommand{\bodef}[1]{%
+      \begin{pgfpicture}{0cm}{-0.5cm}{15cm}{#1cm}
+        \pgfsetlinewidth{.1mm}
+        \color{black}
+        \pgfgrid[stepx=25mm,stepy=10mm]{\pgfxy(0,0)}{\pgfxy(15,#1)}
+        \pgfsetlinewidth{.1mm}
+        \color{gray}
+        \begin{pgftranslate}{\pgfxy(0,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(2.5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(7.5,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(10,0)}
+          \semiloggrid{#1}
+        \end{pgftranslate}
+        \begin{pgftranslate}{\pgfxy(12.5,0)}
+           \semiloggrid{#1}
+        \end{pgftranslate}
+        \pgfsetlinewidth{.2mm}
+        \color{black}
+        \pgfrect[stroke]{\pgfxy(0,0)}{\pgfxy(15,#1)}
+        \pgfputat{\pgfxy(0,-0.5)}{\pgfbox[center,base]{1 Hz}}
+        \pgfputat{\pgfxy(2.5,-0.5)}{\pgfbox[center,base]{10 Hz}}
+        \pgfputat{\pgfxy(5,-0.5)}{\pgfbox[center,base]{100 Hz}}
+        \pgfputat{\pgfxy(7.5,-0.5)}{\pgfbox[center,base]{1 kHz}}
+        \pgfputat{\pgfxy(10,-0.5)}{\pgfbox[center,base]{10 kHz}}
+        \pgfputat{\pgfxy(12.5,-0.5)}{\pgfbox[center,base]{100 kHz}}
+        \pgfputat{\pgfxy(15,-0.5)}{\pgfbox[center,base]{1 MHz}}
+      \end{pgfpicture}
+}
+
+\newcommand{\oscigrid}{%
+    \draw [very thick,rounded corners=0.5cm,black] (-5,-4) rectangle (5,4);
+    \draw [thin,black] (0,-4) -- (0,4);
+    \draw [thin,black] (-5,0) -- (+5,0);
+    \draw [thin,dotted,black!30!white] (-5,2.5) -- (+5,2.5);
+    \draw [thin,dotted,black!30!white] (-5,-2.5) -- (+5,-2.5);
+    \foreach \x in {-4,-3,-2,-1,1,2,3,4}
+    {
+      \draw [thin,black!30!white] (\x,-4) -- (\x,4);
+    }
+    \foreach \x in {-4.8,-4.6,...,4.8}
+    {
+      \draw [thin,black] (\x,-0.1) -- (\x,+0.1);
+    }
+    \foreach \y in {-3,-2,-1,1,2,3}
+    {
+      \draw [thin,black!30!white] (-5,\y) -- (+5,\y);
+    }
+    \foreach \y in {-3.8,-3.6,...,3.8}
+    {
+      \draw [thin,black] (-0.1,\y) -- (+0.1,\y);
+    }
+    \path (6,3) node [anchor=south west] {Channel I};
+    \path (6,2) [draw,very thick] -- ++(2,0) node [anchor=south west] {\Large V/div};
+    \draw [thin] (6,2) ++(-.2,-.2) rectangle ++(3.8,2);
+    \path (6,0.5) node [anchor=south west] {Channel II};
+    \path (6,-0.5) [draw,very thick] -- ++(2,0) node [anchor=south west] {\Large V/div};
+    \draw [thin] (6,-0.5) ++(-.2,-.2) rectangle ++(3.8,2);
+    \path (6,-2.5) node [anchor=south west] {timebase};
+    \path (6,-3.5) [draw,very thick] -- ++(2,0) node [anchor=south west] {\Large s/div};
+    \draw [thin] (6,-3.5) ++(-.2,-.2) rectangle ++(3.8,2);
+}
+
+\newcommand{\osci}{%
+  \begin{tikzpicture}
+    \oscigrid
+  \end{tikzpicture}
+}
+
+\newcommand{\oscisin}{%
+  \begin{tikzpicture}
+    \oscigrid
+    \draw [very thin, densely dotted] (-4.5,0) sin (-2.25,3) cos (0,0) sin (2.25,-3) cos (4.5,0);
+  \end{tikzpicture}
+}
+
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+
+\AtBeginDocument{\sisetup{math-micro=\text{µ},text-micro=µ}\renewcommand{\SIUnitSymbolOhm}{\ensuremath{\text{Ω}}} }
+%\AtBeginDocument{\sisetup{math-micro=\text{µ},text-micro=µ}\renewcommand{\SIUnitSymbolOhm}{\ensuremath{\Omega}} }
+ % 

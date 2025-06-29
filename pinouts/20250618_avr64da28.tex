@@ -1,0 +1,160 @@
+\documentclass[x11names,rgb,swedish,export]{standalone}
+
+\usepackage[no-math]{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\usepackage{babel}
+\usepackage[detect-all,retain-explicit-plus,output-decimal-marker={,},group-digits=integer,group-separator={\,}]{siunitx}
+\usepackage[letterspace=125]{microtype}
+\usepackage{tikz}
+\usepackage{ifthen}
+\usepackage{pgfplots}
+\usepackage{pagecolor}
+\usepackage{xstring}
+%\usepackage{animate}
+\usetikzlibrary{%
+  arrows,%
+  shapes.misc,% wg. rounded rectangle
+  shapes.arrows,%
+  shapes.symbols,%
+  shapes.gates.logic.US,%
+  backgrounds,%
+  calc,%
+  chains,%
+  fit,%
+  fpu,%
+  matrix,%
+  patterns,%
+  positioning,% wg. " of "
+  scopes,%
+  decorations.pathmorphing,% /pgf/decoration/random steps
+  shadows%
+}
+\graphicspath{{D:/Uppsala/projects/courses/Bilder/}
+{D:/Uppsala/projects/bilder/}
+{D:/Uppsala/bilder/}
+{D:/Uppsala/projects/courses/Bilder/3d/}
+{D:/Uppsala/projects/courses/Bilder/electronics/}
+{D:/Uppsala/projects/courses/Bilder/electronics/analog/}
+{D:/Uppsala/projects/courses/Bilder/electronics/digital/}
+{D:/Uppsala/projects/courses/Bilder/electronics/LEDs/}
+{D:/Uppsala/projects/courses/Bilder/electronics/elektrisk_matteknik/}
+{D:/Uppsala/projects/courses/Bilder/cigs/}%
+{D:/Uppsala/projects/courses/Bilder/kiel/}
+{D:/Uppsala/projects/courses/Bilder/sic/}
+{D:/Uppsala/projects/courses/Bilder/solibro/}
+{D:/Uppsala/projects/courses/Bilder/iea/}
+{D:/Uppsala/projects/courses/Bilder/pr/}
+{D:/Uppsala/projects/courses/Bilder/irradiance/}
+{D:/Uppsala/projects/courses/Bilder/measurements/}
+{D:/Uppsala/projects/courses/Bilder/schroder/}
+{D:/Uppsala/projects/courses/Bilder/pvcells/}
+{D:/Uppsala/projects/courses/Bilder/pvmodules/}
+{D:/Uppsala/projects/courses/Bilder/pvsystems/}
+{D:/Uppsala/projects/courses/Bilder/tak/}}
+\input{macros_uwezi_20160704}
+
+\definecolor{khanPink}{HTML}{FB73BE}
+\definecolor{khanCoral}{HTML}{FF8D71}
+\definecolor{khanYellow}{HTML}{FFE066}
+\definecolor{khanTeal}{HTML}{59F3CE}
+\definecolor{khanLBlue}{HTML}{65D0FA}
+\definecolor{khanBlue}{HTML}{4984F2}
+\definecolor{khanPurple}{HTML}{A87DFF}
+
+\pgfplotsset{compat=1.16}
+
+\begin{document}\sisetup{math-micro=\text{µ},text-micro=µ}
+\noindent\pagecolor{white}%
+\begin{tikzpicture}[x=1.0mm,y=1.0mm]
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+    \fill[fill=darkgray, rounded corners=1mm](-7,0) rectangle (7,37.5);
+    \fill[fill=white] (0,37.5)++(0:1.5) arc (0:-180:1.5);
+    \fill[fill=white] (-3.5,35) circle (0.7);
+    \path(0,20)node[text=white,rotate=-90]{\sffamily \bfseries AVR64DA28};
+    \foreach[count=\cnt, evaluate=\cnt as \y using 37.5-\cnt*2.5] \i in {1,2,...,14}%
+    {%
+      \path ($(-7,\y)$) node[white,anchor=west,inner sep=0pt,minimum width=3mm,align=right](lbl\i){\tiny\texttt{\i}};
+      \path (lbl\i.west) node[fill=lightgray,anchor=east,line width=0pt,inner sep=0pt,minimum width=1.2mm,minimum height=1.0mm,align=right,rotate=0](pin\i){};
+
+    }
+    \foreach[count=\cnt, evaluate=\cnt as \y using 0.00+\cnt*2.5] \i in {15,16,...,28}%
+    {%
+      \path ($(+7,\y)$) node[white,anchor=east,inner sep=0pt,minimum width=3mm,align=right](lbl\i){\tiny\texttt{\i}};
+      \path (lbl\i.east) node[fill=lightgray,anchor=west,line width=0pt,inner sep=0pt,minimum width=1.2mm,minimum height=1.0mm,align=right,rotate=0](pin\i){};
+    }
+
+    \pighixxxpin[angle=180]{ pin1.west}{PA7/black/LightGoldenrod1/9mm,{0/XDIR}/gray/Aquamarine1/9mm,{0/SS}/black/Turquoise1/9mm,{TCD0/WOD}/black/IndianRed1/9mm,{X7/Y7}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{ pin2.west}{PC0/black/LightGoldenrod1/9mm,{1/TXD}/black/Aquamarine1/9mm,{1/MOSI}/black/Turquoise1/9mm,{TCA0/WO0}/gray/IndianRed1/9mm,{TCB2/WO0}/black/IndianRed1/9mm,{LUT1/IN0}/black/MediumPurple1/9mm}
+    \pighixxxpin[angle=180]{ pin3.west}{PC1/black/LightGoldenrod1/9mm,{1/RXD}/black/Aquamarine1/9mm,{1/MISO}/black/Turquoise1/9mm,{TCA0/WO1}/gray/IndianRed1/9mm,{TCB3/WO0}/black/IndianRed1/9mm,{LUT1/IN1}/black/MediumPurple1/9mm}
+    \pighixxxpin[angle=180]{ pin4.west}{PC2/black/LightGoldenrod1/9mm,{1/XCK}/black/Aquamarine1/9mm,{1/SCK}/black/Turquoise1/9mm,{0/SDA}/gray/SteelBlue1/9mm,{TCA0/WO2}/gray/IndianRed1/9mm,{LUT1/IN2}/black/MediumPurple1/9mm}
+    \pighixxxpin[angle=180]{ pin5.west}{PC3/black/LightGoldenrod1/9mm,{1/XDIR}/black/Aquamarine1/9mm,{1/SS}/black/Turquoise1/9mm,{0/SCL}/gray/SteelBlue1/9mm,{TCA0/WO3}/gray/IndianRed1/9mm,{LUT1/OUT}/black/MediumPurple1/9mm}
+    \pighixxxpin[angle=180]{ pin6.west}{PD0/black/LightGoldenrod1/9mm,AIN0/black/SpringGreen3/9mm,{TCA0/WO0}/gray/IndianRed1/9mm,{LUT2/IN0}/black/MediumPurple1/9mm,{X16/Y16}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{ pin7.west}{PD1/black/LightGoldenrod1/9mm,AIN1/black/SpringGreen3/9mm,{TCA0/WO1}/gray/IndianRed1/9mm,{LUT2/IN1}/black/MediumPurple1/9mm,{X17/Y17}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{ pin8.west}{PD2/black/LightGoldenrod1/9mm,AIN2/black/SpringGreen3/9mm,{TCA0/WO2}/gray/IndianRed1/9mm,{LUT2/IN2}/black/MediumPurple1/9mm,{X18/Y18}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{ pin9.west}{PD3/black/LightGoldenrod1/9mm,AIN3/black/SpringGreen3/9mm,{TCA0/WO3}/gray/IndianRed1/9mm,{LUT2/OUT}/black/MediumPurple1/9mm,{X19/Y19}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{pin10.west}{PD4/black/LightGoldenrod1/9mm,AIN4/black/SpringGreen3/9mm,{TCA0/WO4}/gray/IndianRed1/9mm,{X20/Y20}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{pin11.west}{PD5/black/LightGoldenrod1/9mm,AIN5/black/SpringGreen3/9mm,{TCA0/WO5}/gray/IndianRed1/9mm,{X21/Y21}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{pin12.west}{PD6/black/LightGoldenrod1/9mm,AIN6/black/SpringGreen3/9mm,{DAC/VOUT}/black/SpringGreen3/9mm,{LUT2/OUT}/black/MediumPurple1/9mm,{X22/Y22}/gray/Thistle2/9mm}
+    \pighixxxpin[angle=180]{pin13.west}{PD7/black/LightGoldenrod1/9mm,AIN7/black/SpringGreen3/9mm,{X23/Y23}/black/Thistle2/9mm}
+    \pighixxxpin[angle=180]{pin14.west}{AVDD/black/Red1/9mm}
+
+
+    \pighixxxpin[angle=0]{pin28.east}{PA6/black/LightGoldenrod1/9mm,{0/XCK}/gray/Aquamarine1/9mm,{0/SCK }/black/Turquoise1/9mm,{TCD0/WOA}/black/IndianRed1/9mm,{LUT0/OUT}/gray/MediumPurple1/9mm,{X6/Y6}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin27.east}{PA5/black/LightGoldenrod1/9mm,{0/RXD}/gray/Aquamarine1/9mm,{0/MISO}/black/Turquoise1/9mm,{TCA0/WO5}/black/IndianRed1/9mm,{TCD0/WOB}/black/IndianRed1/9mm,{X5/Y5}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin26.east}{PA4/black/LightGoldenrod1/9mm,{0/TXD}/gray/Aquamarine1/9mm,{0/MOSI}/black/Turquoise1/9mm,{TCA0/WO4}/black/IndianRed1/9mm,{TCD0/WOC}/black/IndianRed1/9mm,{X4/Y4}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin25.east}{PA3/black/LightGoldenrod1/9mm,{0/XDIR}/black/Aquamarine1/9mm,{0/SDA}/black/SteelBlue1/9mm,{TCA0/WO3}/black/IndianRed1/9mm,{TCB1/WO}/black/IndianRed1/9mm,{LUT0/OUT}/black/MediumPurple1/9mm,{X3/Y3}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin24.east}{PA2/black/LightGoldenrod1/9mm,{0/XCK }/black/Aquamarine1/9mm,{0/SCL}/black/SteelBlue1/9mm,{TCA0/WO2}/black/IndianRed1/9mm,{TCB0/WO}/black/IndianRed1/9mm,{LUT0/IN2}/black/MediumPurple1/9mm,{X2/Y2}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin23.east}{PA1/black/LightGoldenrod1/9mm,{0/RXD}/black/Aquamarine1/9mm,{TCA0/WO1}/black/IndianRed1/9mm,{LUT0/IN1}/black/MediumPurple1/9mm,{X1/Y1}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin22.east}{PA0/black/LightGoldenrod1/9mm,{0/TXD}/black/Aquamarine1/9mm,{TCA0/WO0}/black/IndianRed1/9mm,{LUT0/IN0}/black/MediumPurple1/9mm,{X0/Y0}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin21.east}{GND/white/black/9mm}
+    \pighixxxpin[angle=0]{pin20.east}{VDD/black/Red1/9mm}
+    \pighixxxpin[angle=0]{pin19.east}{UDPI/black/Gold1/9mm}
+    \pighixxxpin[angle=0]{pin18.east}{RESET/black/Gold1/9mm,PF6/black/LightGoldenrod1/9mm}
+    \pighixxxpin[angle=0]{pin17.east}{{XTAL32K}/black/Gold1/9mm,PF1/black/LightGoldenrod1/9mm,{2/RXD}/black/Aquamarine1/9mm,{TCA0/WO1}/gray/IndianRed1/9mm,{TCD0/WOB}/gray/IndianRed1/9mm,{LUT3/IN1}/black/MediumPurple1/9mm,{X33/Y33}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin16.east}{{XTAL32K}/black/Gold1/9mm,PF0/black/LightGoldenrod1/9mm,{2/TXD}/black/Aquamarine1/9mm,{TCA0/WO0}/gray/IndianRed1/9mm,{TCD0/WOA}/gray/IndianRed1/9mm,{LUT3/IN0}/black/MediumPurple1/9mm,{X32/Y32}/black/Thistle2/9mm}
+    \pighixxxpin[angle=0]{pin15.east}{GND/white/black/9mm}
+
+    \path (-60,-2) coordinate (legend);
+
+    \path ($(legend) + (+1, -2)$) node[anchor=north west,draw=black,line width=.1mm,fill=Red1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny Power};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=black,text=white,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny GND};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=Gold1,text=black,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny Control};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=LightGoldenrod1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny GPIO};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=SpringGreen3,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny Analog};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=Aquamarine1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny UART};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=Turquoise1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny SPI};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=SteelBlue1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny I2C};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=Thistle2,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny PTC};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=IndianRed1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny PWM};
+
+    \path ($(label.base east) + (2, 0)$) node[anchor=south west,draw=black,line width=.1mm,fill=MediumPurple1,minimum width=3mm,minimum height=1.5mm,inner sep=0pt](rect){};
+    \path (rect.south east) node[anchor=base west,inner sep=2pt](label){\sffamily\slshape\tiny CCL};
+
+    \begin{pgfonlayer}{background}
+        \fill [AntiqueWhite1,rounded corners = 1mm] (legend) rectangle ($(label.south east) + (1,-1)$);
+    \end{pgfonlayer}
+\end{tikzpicture}
+
+\end{document}
+
