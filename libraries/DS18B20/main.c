@@ -53,6 +53,10 @@ void setup(void)
         uint8_t dummy = (addr >> i) & 0x0f;
         LCD_print(utoa(dummy,buffer,16));
       }
+      DS18B20_reset();
+      DS18B20_write(DS18B20_CMD_SKIPROM);
+      DS18B20_write_config(-55, +125, DS18B20_CFG_9BIT);
+
       _delay_ms(1500);
 }
 
@@ -67,10 +71,9 @@ int main(void)
     {
       dummy = i*4;
 
-      // start conversion on all units
+      // start conversion on all DS18B20 units
       DS18B20_reset();
       DS18B20_write(DS18B20_CMD_SKIPROM);
-
       DS18B20_write(DS18B20_CMD_CONVERTTEMP);
 
       LCD_setCursor(0,0);

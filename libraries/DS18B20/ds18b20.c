@@ -108,6 +108,20 @@ void DS18B20_write(uint8_t byte)
 }
 
 /*--------------------------------------------------------------------------------------------------
+  Name         :  DS18B20_write_config
+  Description  :  writes three bytes to the scratchpad TH, TL and CFG
+  Argument(s)  :  high threshold, low threshold, configuration
+  Return value :  none
+--------------------------------------------------------------------------------------------------*/
+void DS18B20_write_config(int8_t THIGH, int8_t TLOW, uint8_t CONFIG)
+{
+    DS18B20_write(DS18B20_CMD_WSCRATCHPAD);
+    DS18B20_write(THIGH);
+    DS18B20_write(TLOW);
+    DS18B20_write(CONFIG);
+}
+
+/*--------------------------------------------------------------------------------------------------
   Name         :  DS18B20_readBit
   Description  :  read a single bit
   Argument(s)  :  None.

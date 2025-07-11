@@ -36,6 +36,10 @@ extern uint16_t DS_devcount;
 #define DS18B20_CMD_SKIPROM 0xcc
 #define DS18B20_CMD_ALARMSEARCH 0xec
 
+#define DS18B20_CFG_9BIT  0b00 << 5
+#define DS18B20_CFG_10BIT 0b01 << 5
+#define DS18B20_CFG_11BIT 0b10 << 5
+#define DS18B20_CFG_12BIT 0b11 << 5
 /*--------------------------------------------------------------------------------------------------
   Name         :  DS18B20_init
   Description  :  sets port and pin for the sensor
@@ -67,6 +71,14 @@ void DS18B20_writeBit (uint8_t bit);
   Return value :  none
 --------------------------------------------------------------------------------------------------*/
 void DS18B20_write(uint8_t byte);
+
+/*--------------------------------------------------------------------------------------------------
+  Name         :  DS18B20_write_config
+  Description  :  writes three bytes to the scratchpad TH, TL and CFG
+  Argument(s)  :  high threshold, low threshold, configuration
+  Return value :  none
+--------------------------------------------------------------------------------------------------*/
+void DS18B20_write_config(int8_t THIGH, int8_t TLOW, uint8_t CONFIG);
 
 /*--------------------------------------------------------------------------------------------------
   Name         :  DS18B20_readBit
