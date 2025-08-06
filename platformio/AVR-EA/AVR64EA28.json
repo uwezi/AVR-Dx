@@ -1,0 +1,18 @@
+{
+  "build": {
+    "f_cpu": "4000000L",
+    "mcu": "avr64ea28",
+    "variant": "28pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "name": "AVR64EA28",
+  "upload": {
+    "maximum_ram_size": 6144,
+    "maximum_size": 65536,
+    "protocol": "serialupdi"
+  },
+  "url": "https://www.microchip.com/en-us/product/avr64ea28",
+  "vendor": "Microchip"
+}
