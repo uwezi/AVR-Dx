@@ -1,6 +1,6 @@
 # Settings for the platformio extension in VSCode
 
-When removing the link to the Arduino framework from the platformio.ini, PlatformIO reverts back to the older 1.7 toolchain, which still lacks support for the AVR-Dx microcontrollers. You can override this in the platfromio.ini:
+When removing the link to the Arduino framework from the `platformio.ini`, PlatformIO reverts back to the older 1.7 toolchain, which still lacks support for the AVR-Dx microcontrollers. You can override this in the `platformio.ini`:
 
 ```
 [env:AVR64DA28]
@@ -36,7 +36,7 @@ to
       "version": "~3.70300.0"
     },
 ```
-and then have your platformio.ini simply as
+and then have your `platformio.ini` simply as
 ```
 [env:AVR64DA28]
 platform = atmelmegaavr
