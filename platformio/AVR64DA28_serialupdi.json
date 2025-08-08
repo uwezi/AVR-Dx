@@ -1,0 +1,18 @@
+{
+  "build": {
+    "f_cpu": "4000000L",
+    "mcu": "avr64da28",
+    "variant": "28pin-standard"
+  },
+  "hardware": {
+    "oscillator": "internal"
+  },
+  "name": "AVR64DA28 serial UPDI",
+  "upload": {
+    "maximum_ram_size": 8192,
+    "maximum_size": 65536,
+    "protocol": "serialupdi"
+  },
+  "url": "https://www.microchip.com/wwwproducts/en/AVR64DA28",
+  "vendor": "Microchip"
+}
