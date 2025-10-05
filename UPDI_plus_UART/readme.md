@@ -19,5 +19,8 @@ seems to be already supported by all modern operating systems.
 ## KiCAD view of both front and back layer
 <img width="6136" height="2456" alt="image" src="https://github.com/user-attachments/assets/d5e750f2-c559-4e88-9f6d-d164812b02ab" />
 
+# Files
 You find the KiCAD and gerber files in this directory.
+
+There is also an OpenSCAD design and .stl files for a case for the programmer when you do not intend to use it on a breadbaord.
 
