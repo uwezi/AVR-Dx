@@ -9,9 +9,9 @@ with their services.
 <img width="672" height="568" alt="image" src="https://github.com/user-attachments/assets/d81acdd6-1bb7-4d86-88f5-67d012e74c1d" />
 
 The design uses the lesser known [CH342K](https://docs.sparkfun.com/SparkFun_RTK_Postcard/assets/component_documentation/CH342%20Datasheet.pdf) 
-which can be sourced from LCSC and ALiexpress for about € 1,50 a piece - I found no "western" source for this chip. This chip is similar to the 
-CH340-series of USB-UARTs, but it even contains two independent serial ports in a single 10pin SMD package, needs no external oscillator and
-seems to be already supported by all modern operating systems.
+which can be sourced from LCSC and Aliexpress for about € 1,50 a piece - I found no "western" source for this chip. The chip is similar to the 
+CH340-series of USB-UARTs, but it even contains two independent serial ports in a single 10pin SMD package with an exposed pad on the underside, it needs no external oscillator and
+it seems to be already supported by all modern operating systems.
 
 ## KiCAD 3D rendering
 <img width="1569" height="845" alt="image" src="https://github.com/user-attachments/assets/d088a427-184c-41e3-acdc-ba960df3a401" />
@@ -20,7 +20,7 @@ seems to be already supported by all modern operating systems.
 <img width="6136" height="2456" alt="image" src="https://github.com/user-attachments/assets/d5e750f2-c559-4e88-9f6d-d164812b02ab" />
 
 # Files
-You find the KiCAD and gerber files in this directory.
+You can find the KiCAD and gerber files in this directory.
 
 There is also an OpenSCAD design and .stl files for a case for the programmer when you do not intend to use it on a breadbaord.
 
