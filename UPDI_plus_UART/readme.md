@@ -13,6 +13,9 @@ which can be sourced from LCSC and Aliexpress for about € 1,50 a piece - I fou
 CH340-series of USB-UARTs, but it even contains two independent serial ports in a single 10pin SMD package with an exposed pad on the underside, it needs no external oscillator and
 it seems to be already supported by all modern operating systems.
 
+<img width="1300" height="707" alt="image" src="https://github.com/user-attachments/assets/684983fd-540c-4f36-9fdc-69b49196f75d" />
+
+
 ## KiCAD 3D rendering
 <img width="1569" height="845" alt="image" src="https://github.com/user-attachments/assets/d088a427-184c-41e3-acdc-ba960df3a401" />
 
