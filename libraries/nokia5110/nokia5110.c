@@ -11,6 +11,7 @@
  * --------
  * * 2015-06-09 originally created
  * * 2025-09-05 ported to the AVR-Dx family
+ * * 2025-10-20 added tiny font
  */
 
 #include "nokia5110.h"
@@ -391,6 +392,65 @@ void NOKIA_putchar(uint8_t x0, uint8_t y0, char ch, uint8_t attr)
 }
 
 /**
+ * @name NOKIA_puttinychar
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param ch  character 0..255
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief puts a single character from 4x6 font onto LCD
+ */
+void NOKIA_puttinychar(uint8_t x0, uint8_t y0, char ch, uint8_t attr)
+{
+  uint8_t i, fontbyte;
+  uint16_t m;
+  if (ch > 93)
+  {
+    ch = ch & 0b01011111;
+  }
+  for (i=0; i<3; i++)
+  {
+    fontbyte = pgm_read_byte(&tinyFont[(uint8_t)ch][i]);
+    switch (attr)
+    {
+      case  0:
+          break;
+      case  1:
+          fontbyte ^= 0xff;
+          break;
+      case  2:
+          if (i==2)
+          {
+            fontbyte |= 0b00001111;
+          }
+          break;
+    }
+    uint8_t fh = (fontbyte & 0xf0) >> 4;
+    for (uint8_t j=0; j<4; j++)
+    {
+      if (fh & 0b00001000)
+      {
+        NOKIA_setpixel(x0+j,y0+2*i);
+      }
+      else
+      {
+        NOKIA_clearpixel(x0+j,y0+2*i);
+      }
+      if (fontbyte & 0b00001000)
+      {
+        NOKIA_setpixel(x0+j,y0+1+2*i);
+      }
+      else
+      {
+        NOKIA_clearpixel(x0+j,y0+1+2*i);
+      }
+      fontbyte <<= 1;
+      fh <<= 1;
+    }
+  }
+}
+
+/**
  * @name NOKIA_print
  * @param x  x-coordinate upper-left corner 0..83
  * @param y  y-coordinate upper-left corner 0..47
@@ -410,7 +470,7 @@ void NOKIA_print(uint8_t x, uint8_t y, char *ch, uint8_t attr)
 }
 
 /**
- * @name NOKIA_print_p
+ * @name NOKIA_print_P
  * @param x  x-coordinate upper-left corner 0..83
  * @param y  y-coordinate upper-left corner 0..47
  * @param *ch  pointer to null-terminated string in PROGMEM
@@ -418,7 +478,7 @@ void NOKIA_print(uint8_t x, uint8_t y, char *ch, uint8_t attr)
  * @return none
  * @brief prints a character string from PROGMEM into the framebuffer
  */
-void NOKIA_print_p(uint8_t x, uint8_t y, const char *ch,uint8_t attr)
+void NOKIA_print_P(uint8_t x, uint8_t y, const char *ch,uint8_t attr)
 {
   char c;
   while ((c = pgm_read_byte(ch)))
@@ -426,6 +486,45 @@ void NOKIA_print_p(uint8_t x, uint8_t y, const char *ch,uint8_t attr)
     NOKIA_putchar(x, y, c, attr);
     ch++;
     x += 6;
+  }
+}
+
+/**
+ * @name NOKIA_printtiny
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string into the framebuffer using the 4x6 font
+ */
+void NOKIA_printtiny(uint8_t x, uint8_t y, char *ch, uint8_t attr)
+{
+  while (*ch)
+  {
+    NOKIA_puttinychar(x, y, *ch, attr);
+    ch++;
+    x += 4;
+  }
+}
+
+/**
+ * @name NOKIA_printtiny_P
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string in PROGMEM
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string from PROGMEM into the framebuffer using the 4x6 font
+ */
+void NOKIA_printtiny_P(uint8_t x, uint8_t y, const char *ch,uint8_t attr)
+{
+  char c;
+  while ((c = pgm_read_byte(ch)))
+  {
+    NOKIA_puttinychar(x, y, c, attr);
+    ch++;
+    x += 4;
   }
 }
 

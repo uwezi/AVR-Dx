@@ -1,3 +1,21 @@
+/**
+ * @file font_6x8_iso8859_1
+ * @brief 6x8 pixel font
+ *
+ * @author Uwe Zimmermann
+ *
+ * The library work is licensed under a MIT license.\n
+ * See https://github.com/uwezi/AVR-Dx
+ *
+ * ChangeLog:
+ * --------
+ * * 2015-06-09 originally created
+ * * 2025-1020 ported to .h file
+ */
+#ifndef FONT_6X8_ISO8859_1_H_
+#define FONT_6X8_ISO8859_1_H_
+
+static const uint8_t smallFont[][6] PROGMEM =
 { // 6x8 font
   {0x80, 0x80, 0x80, 0x80, 0x80, 0x80}, // 0x00 level 1-1
   {0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0}, // 0x01 level 1-2
@@ -256,3 +274,5 @@
   {0x00, 0x82, 0xFE, 0xA8, 0x10, 0x00}, // 0xfe &thorn;
   {0x18, 0xA1, 0xA0, 0xA1, 0x78, 0x00}  // 0xff &yuml;
 };
+
+#endif /* FONT_6X8_ISO8859_1 */

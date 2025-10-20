@@ -1,33 +1,46 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <nokia5110.h>
+#include <avr/pgmspace.h>
+
+void init(void)
+{
+  _PROTECTED_WRITE(CLKCTRL.OSCHFCTRLA, CLKCTRL_FRQSEL_4M_gc);
+
+  NOKIA_init(
+    &PORTD, 3, //sce_pin,
+    &PORTD, 4, //rst_pin,
+    &PORTD, 2, //dc_pin,
+    &PORTD, 1, //sd_pin,
+    &PORTD, 0, //scl_pin,
+    0xd0,   //vop,
+    NOKIA_ORIENTATION_180
+  );
+  NOKIA_print(0,40,"Hello World!",NOKIA_NORMAL);
+  NOKIA_printtiny_P(0,34,PSTR("Hello World!"),NOKIA_NORMAL);
+  NOKIA_update();
+  _delay_ms(1000);
+}
 
 int main(void)
 {
-    char buffer[40];
-    uint8_t vop = 0;
+  init();
+  uint8_t vop=0;
+  char buffer[30];
+  for (uint8_t i = 0; i < 24; i++)
+  {
+    NOKIA_puttinychar(i*4,0,'0'+i/10,NOKIA_NORMAL);
+    NOKIA_puttinychar(i*4,6,'0'+i%10,NOKIA_NORMAL);
+  }
 
-    /*
-      display connected as
-      Pin D0 - CLK (SCL)
-      Pin D1 - DIN (SD)
-      Pin D2 - D/C (DC)
-      Pin D3 - CE  (SCE)
-      Pin D4 - RST
-    */
-    NOKIA_init(&PORTD, 3, &PORTD, 4, &PORTD, 2, &PORTD, 1, &PORTD, 0, 0xc8, NOKIA_ORIENTATION_180);
-
-    while (1)
-    {
-        vop++;
-        sprintf(buffer, "VOP 0x%02x", vop);
-
-        // uncomment to test different VOP settings
-        // note the value for which the text is clearly readable
-        //NOKIA_setVop(vop);
-        NOKIA_print(0, 0, buffer, 0);  // print message in Nokia framebuffer
-        NOKIA_update();
-        _delay_ms(5);
-   }
-
+  while (1)
+  {
+    NOKIA_setVop(vop);
+    sprintf(buffer,"VOP=0x%02X",vop);
+    NOKIA_print(0,20,buffer,NOKIA_NORMAL);
+    NOKIA_printtiny(0,28,buffer,NOKIA_NORMAL);
+    NOKIA_update();
+    vop++;
+    _delay_ms(20);
+  }
 }

@@ -11,6 +11,8 @@
  * --------
  * * 2015-06-09 originally created
  * * 2025-09-05 ported to the AVR-Dx family
+ * * 2025-10-20 added tiny font
+ *
  */
 #ifndef NOKIA5110_H_
 #define NOKIA5110_H_
@@ -21,6 +23,8 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include <string.h>
+#include <font_6x8_iso8859_1.h>
+#include <font_4x6.h>
 
 #define NOKIA_SIZEX 84
 #define NOKIA_SIZEY 48
@@ -29,13 +33,6 @@
 #define NOKIA_NORMAL    0
 #define NOKIA_INVERSE   1
 #define NOKIA_UNDERLINE 2
-
-/**
- * @name smallFont
- * @brief a 6x8 pixel font
- */
-static const uint8_t smallFont[][6] PROGMEM =
-#include "font_6x8_iso8859_1.h"
 
 extern uint8_t NOKIA_FRAMEBUFFER[NOKIA_SIZEX*NOKIA_SIZEY/8];
 extern uint8_t NOKIA_ORIENTATION;
@@ -173,7 +170,7 @@ void NOKIA_putchar(uint8_t x0, uint8_t y0, char ch, uint8_t attr);
 void NOKIA_print(uint8_t x, uint8_t y, char *ch, uint8_t attr);
 
 /**
- * @name NOKIA_print_p
+ * @name NOKIA_print_P
  * @param x  x-coordinate upper-left corner 0..83
  * @param y  y-coordinate upper-left corner 0..47
  * @param *ch  pointer to null-terminated string in PROGMEM
@@ -181,7 +178,40 @@ void NOKIA_print(uint8_t x, uint8_t y, char *ch, uint8_t attr);
  * @return none
  * @brief prints a character string from PROGMEM into the framebuffer
  */
-void NOKIA_print_p(uint8_t x, uint8_t y, const char *ch,uint8_t attr);
+void NOKIA_print_P(uint8_t x, uint8_t y, const char *ch,uint8_t attr);
+
+/**
+ * @name NOKIA_puttinychar
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param ch  character 0..255
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief puts a single character from 4x6 font onto LCD
+ */
+void NOKIA_puttinychar(uint8_t x0, uint8_t y0, char ch, uint8_t attr);
+
+/**
+ * @name NOKIA_printtiny
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string into the framebuffer using the 4x6 font
+ */
+void NOKIA_printtiny(uint8_t x, uint8_t y, char *ch, uint8_t attr);
+
+/**
+ * @name NOKIA_printtiny_p
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string in PROGMEM
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string from PROGMEM into the framebuffer using the 4x6 font
+ */
+void NOKIA_printtiny_P(uint8_t x, uint8_t y, const char *ch,uint8_t attr);
 
 /**
  * @name NOKIA_scroll
