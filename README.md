@@ -18,3 +18,15 @@ As I am just getting started with the "new" Microchip AVR-Dx series of microcont
 <img width="672" height="568" alt="image" src="https://github.com/user-attachments/assets/d81acdd6-1bb7-4d86-88f5-67d012e74c1d" />
 
 - [UPDI Programmer](UPDI_programmer) - how to convert a USB-C UART module into an UPDI programmer and the attached pitfalls
+
+## Observations and errata
+- On both the AVR32DA28 and AVR128DA64, purchased in summer 2025, the RESET pin was disabled in the `syscfg0` fuse register by default. This is in contrast to the corresponding section from both devices' datasheets. The value in the fuse register on both factory-new devices was `0xC0` and not `0xC8`. 
+> The default value given in this fuse description is the factory-programmed value, and should not be mistaken for the
+Reset value.
+
+<img width="1018" height="512" alt="bild" src="https://github.com/user-attachments/assets/5812fdbc-f252-4d19-bbbb-dd6488b43fd3" />
+
+Setting the fuse to the correct value for enabling the reset pin can be done by
+```avrdude -p32da28 -PCOM3 -cserialupdi -U syscfg0:w:0xc0:m```
+
+
