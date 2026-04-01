@@ -1,0 +1,218 @@
+/**
+ * @file nokia5110_hspi.h
+ * @brief simple library for the Nokia 5110 transflexive LCD, 84x48 pixels
+ *
+ * @author Uwe Zimmermann
+ *
+ * The library work is licensed under a MIT license.\n
+ * See https://github.com/uwezi/AVR-Dx
+ *
+ * ChangeLog:
+ * --------
+ * * 2015-06-09 originally created
+ * * 2025-09-05 ported to the AVR-Dx family
+ * * 2025-10-20 added tiny font
+ * * 2025-12-06 hardware SPI0
+ *
+ */
+#ifndef NOKIA5110_HSPI_H_
+#define NOKIA5110_HSPI_H_
+
+#include <avr/io.h>
+#include <stdlib.h>
+#include <util/atomic.h>
+#include <util/delay.h>
+#include <avr/pgmspace.h>
+#include <string.h>
+#include <font_6x8_iso8859_1.h>
+#include <font_4x6.h>
+
+#define NOKIA_SIZEX 84
+#define NOKIA_SIZEY 48
+#define NOKIA_ORIENTATION_0   0
+#define NOKIA_ORIENTATION_180 1
+#define NOKIA_NORMAL    0
+#define NOKIA_INVERSE   1
+#define NOKIA_UNDERLINE 2
+
+extern uint8_t NOKIA_FRAMEBUFFER[NOKIA_SIZEX*NOKIA_SIZEY/8];
+extern uint8_t NOKIA_ORIENTATION;
+
+/**
+ * @name NOKIA_writeCommand
+ * @param data uint8_t of data
+ * @return none
+ * @brief writes one byte in command-mode to the display
+ */
+void NOKIA_writeCommand (uint8_t command );
+
+/**
+ * @name NOKIA_writeData
+ * @param data uint8_t of data
+ * @return none
+ * @brief writes one byte in data-mode to the display
+ */
+void NOKIA_writeData (uint8_t data );
+
+/**
+ * @name NOKIA_gotoXY
+ * @param x x-coordinate 0..83
+ * @param y y-coordinate 0..47
+ * @return none
+ * @brief sets the displays write pointer - for partial writes (not used)
+ */
+void NOKIA_gotoXY ( uint8_t x, uint8_t y );
+
+/**
+ * @name NOKIA_fillbuffer
+ * @param value byte value to fill the display with
+ * @return none
+ * @brief fills the display buffer with a given bit pattern
+ */
+void NOKIA_fillbuffer(uint8_t value);
+
+/**
+ * @name NOKIA_clearbuffer
+ * @param none
+ * @return none
+ * @brief clears the display buffer (no update to the display)
+ */
+void NOKIA_clearbuffer(void);
+
+/**
+ * @name NOKIA_update
+ * @param none
+ * @return none
+ * @brief updates the display with the current framebuffer
+ */
+void NOKIA_update (void);
+
+/**
+ * @name NOKIA_clear
+ * @param none
+ * @return none
+ * @brief clears the display buffer and updates the display
+ */
+void NOKIA_clear ( void );
+
+/**
+ * @name NOKIA_init
+ * @param spi SPI-struct of the used SPI interface
+ * @param rst_port PORT-struct of the RST pin
+ * @param rst_pin pin number of the RST pin
+ * @param dc_port PORT-struct of the DC pin
+ * @param dc_pin pin number of the DC pin
+ * @param vop  the contrast voltage parameter 0..127
+ * @param orientation  orientation of the display (0: 0°, 1: 180°)
+ * @return none
+ * @brief initialize the NOKIA display, the SCK and MOSI pins need to be outputs
+ */
+void NOKIA_init (
+  volatile SPI_t *spi,
+  volatile PORT_t *rst_port, uint8_t rst_pin,
+  volatile PORT_t *dc_port, uint8_t dc_pin,
+  uint8_t vop,
+  uint8_t orientation
+);
+
+/**
+ * @name NOKIA_setVop
+ * @param vop  the contrast voltage parameter 0..127
+ * @return none
+ * @brief sets the display's contrast voltage
+ */
+void NOKIA_setVop(uint8_t vop);
+
+/**
+ * @name NOKIA_setpixel
+ * @param x  x-coordinate 0..83
+ * @param y  y-coordinate 0..47
+ * @return none
+ * @brief sets a single pixel at (x,y)
+ */
+void NOKIA_setpixel(uint8_t x, uint8_t y);
+
+/**
+ * @name NOKIA_clearpixel
+ * @param x  x-coordinate 0..83
+ * @param y  y-coordinate 0..47
+ * @return none
+ * @brief clears a single pixel at (x,y)
+ */
+void NOKIA_clearpixel(uint8_t x, uint8_t y);
+
+/**
+ * @name NOKIA_putchar
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param ch  character 0..255
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief puts a single character onto LCD
+ */
+void NOKIA_putchar(uint8_t x0, uint8_t y0, char ch, uint8_t attr);
+
+/**
+ * @name NOKIA_print
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string into the framebuffer
+ */
+void NOKIA_print(uint8_t x, uint8_t y, char *ch, uint8_t attr);
+
+/**
+ * @name NOKIA_print_P
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string in PROGMEM
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string from PROGMEM into the framebuffer
+ */
+void NOKIA_print_P(uint8_t x, uint8_t y, const char *ch,uint8_t attr);
+
+/**
+ * @name NOKIA_puttinychar
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param ch  character 0..255
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief puts a single character from 4x6 font onto LCD
+ */
+void NOKIA_puttinychar(uint8_t x0, uint8_t y0, char ch, uint8_t attr);
+
+/**
+ * @name NOKIA_printtiny
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string into the framebuffer using the 4x6 font
+ */
+void NOKIA_printtiny(uint8_t x, uint8_t y, char *ch, uint8_t attr);
+
+/**
+ * @name NOKIA_printtiny_p
+ * @param x  x-coordinate upper-left corner 0..83
+ * @param y  y-coordinate upper-left corner 0..47
+ * @param *ch  pointer to null-terminated string in PROGMEM
+ * @param attr  attribute (0-normal, 1-inverse, 2-underline)
+ * @return none
+ * @brief prints a character string from PROGMEM into the framebuffer using the 4x6 font
+ */
+void NOKIA_printtiny_P(uint8_t x, uint8_t y, const char *ch,uint8_t attr);
+
+/**
+ * @name NOKIA_scroll
+ * @param dy  y-shift -47..47
+ * @return none
+ * @brief shifts the contents of the framebuffer vertically
+ */
+void NOKIA_scroll(int8_t dy);
+
+#endif /* NOKIA5110_HSPI_H_ */
